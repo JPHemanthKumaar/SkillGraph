@@ -1,0 +1,8 @@
+bin/
+obj/
+**/bin/
+**/obj/
+appsettings.Local.json
+.env
+*.user
+*.md

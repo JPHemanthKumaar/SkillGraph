@@ -4,10 +4,12 @@ import { Observable, catchError, of, throwError } from 'rxjs';
 import {
   Person, Skill, Project, Recommendation, SkillPath, GraphStats
 } from './models';
+import { environment } from '../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  private base = '/api/graph';
+  /** Relative /api works locally (proxy) and on Vercel (rewrites). */
+  private base = `${environment.apiUrl || ''}/api/graph`;
 
   constructor(private http: HttpClient) {}
 
