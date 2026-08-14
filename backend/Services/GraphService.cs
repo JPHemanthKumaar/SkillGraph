@@ -441,15 +441,23 @@ public class GraphService : IGraphService, IDisposable
         await using var session = GetDriver().AsyncSession(o => o.WithDatabase(_database));
         return await session.ExecuteReadAsync(async tx =>
         {
+            // Deduplicate by node-id sequence: multiple rel types (PREREQUISITE + RELATED_TO)
+            // between the same skills otherwise produce identical-looking 1-hop paths.
             var cursor = await tx.RunAsync(@"
-                MATCH path = shortestPath(
+                MATCH path = allShortestPaths(
                     (from:Skill {id: $fromSkillId})-[:PREREQUISITE|RELATED_TO*1..6]-(to:Skill {id: $toSkillId})
                 )
                 WITH nodes(path) AS nodes, length(path) AS len
-                RETURN [n IN nodes | {skillId: n.id, skillName: n.name}] AS steps, len AS length
+                WITH reduce(k = '', n IN nodes | k + n.id + '>') AS pathKey,
+                     [n IN nodes | {skillId: n.id, skillName: n.name}] AS steps,
+                     len AS length
+                WITH pathKey, head(collect(steps)) AS steps, length
+                RETURN steps, length
+                ORDER BY length
                 LIMIT 5",
                 new { fromSkillId, toSkillId });
             var list = new List<SkillPathDto>();
+            var seen = new HashSet<string>();
             await foreach (var r in cursor)
             {
                 var stepsRaw = r["steps"].As<List<object>>();
@@ -465,6 +473,8 @@ public class GraphService : IGraphService, IDisposable
                             hop++));
                     }
                 }
+                var key = string.Join(">", steps.Select(s => s.SkillId));
+                if (!seen.Add(key)) continue;
                 list.Add(new SkillPathDto(steps, r["length"].As<int>()));
             }
             return list;
