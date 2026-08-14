@@ -1,0 +1,28 @@
+<div class="page-header">
+  <div>
+    <h1>People</h1>
+    <p>Team members and their skill profiles</p>
+  </div>
+</div>
+
+<div class="loading" *ngIf="loading">Loading people…</div>
+<div class="error" *ngIf="error">{{ error }}</div>
+<div class="empty" *ngIf="!loading && !error && people.length === 0">
+  No people yet. Go to Home and load sample data.
+</div>
+
+<div class="grid" *ngIf="!loading && people.length">
+  <a class="card card-link person" *ngFor="let p of people" [routerLink]="['/people', p.id]">
+    <div class="row">
+      <img [src]="p.avatarUrl" [alt]="p.name" class="avatar" />
+      <div>
+        <h3>{{ p.name }}</h3>
+        <p class="title">{{ p.title }}</p>
+      </div>
+    </div>
+    <div class="skills" *ngIf="p.skills?.length">
+      <span class="badge" *ngFor="let s of p.skills | slice:0:4">{{ s.skillName }}</span>
+      <span class="more" *ngIf="p.skills!.length > 4">+{{ p.skills!.length - 4 }}</span>
+    </div>
+  </a>
+</div>

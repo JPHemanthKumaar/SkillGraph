@@ -1,0 +1,34 @@
+<div class="page-header">
+  <div>
+    <h1>Skills</h1>
+    <p>Click a skill to see its prerequisite chain (multi-hop traversal)</p>
+  </div>
+</div>
+
+<div class="loading" *ngIf="loading">Loading skills…</div>
+<div class="error" *ngIf="error">{{ error }}</div>
+
+<div class="layout" *ngIf="!loading && skills.length">
+  <div class="list">
+    <div class="cat" *ngFor="let g of byCategory()">
+      <h3>{{ g.category }}</h3>
+      <button
+        *ngFor="let s of g.skills"
+        class="skill-btn"
+        [class.active]="selected?.id === s.id"
+        (click)="select(s)">
+        {{ s.name }}
+      </button>
+    </div>
+  </div>
+  <div class="panel card" *ngIf="selected">
+    <h2>{{ selected.name }}</h2>
+    <p>{{ selected.description }}</p>
+    <h3>Prerequisites (up to 5 hops)</h3>
+    <div class="loading" *ngIf="loadingPre">Traversing…</div>
+    <div *ngIf="!loadingPre && prereqs.length === 0" class="empty-inline">No prerequisites defined</div>
+    <ul *ngIf="prereqs.length">
+      <li *ngFor="let p of prereqs">{{ p.name }} <span class="muted">({{ p.category }})</span></li>
+    </ul>
+  </div>
+</div>

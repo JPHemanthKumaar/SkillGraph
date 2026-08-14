@@ -1,0 +1,51 @@
+<a routerLink="/people" class="back">← People</a>
+
+<div class="loading" *ngIf="loading">Loading…</div>
+<div class="error" *ngIf="error">{{ error }}</div>
+
+<div *ngIf="person && !loading" class="detail">
+  <div class="header card">
+    <img [src]="person.avatarUrl" [alt]="person.name" class="avatar" />
+    <div>
+      <h1>{{ person.name }}</h1>
+      <p class="title">{{ person.title }}</p>
+      <p *ngIf="person.bio">{{ person.bio }}</p>
+    </div>
+  </div>
+
+  <div class="cols">
+    <section class="card">
+      <h2>Skills</h2>
+      <div class="skill-list" *ngIf="person.skills?.length; else noSkills">
+        <div class="skill-row" *ngFor="let s of person.skills">
+          <span class="name">{{ s.skillName }}</span>
+          <span class="badge" [class.badge-green]="s.level==='Expert'" [class.badge-amber]="s.level==='Advanced'">{{ s.level }}</span>
+          <span class="years">{{ s.years }}y</span>
+        </div>
+      </div>
+      <ng-template #noSkills><p class="empty-inline">No skills recorded</p></ng-template>
+    </section>
+
+    <section class="card">
+      <h2>Recommended mentors</h2>
+      <p class="hint">People with overlapping skills (graph recommendation)</p>
+      <div *ngIf="mentors.length; else noMentors">
+        <a class="mentor" *ngFor="let m of mentors" [routerLink]="['/people', m.personId]">
+          <strong>{{ m.personName }}</strong>
+          <span class="muted">{{ m.title }}</span>
+          <span class="reason">{{ m.reason }}</span>
+        </a>
+      </div>
+      <ng-template #noMentors><p class="empty-inline">No recommendations yet</p></ng-template>
+    </section>
+
+    <section class="card">
+      <h2>Suggested next skills</h2>
+      <p class="hint">1–2 hops from current skills via RELATED_TO / PREREQUISITE</p>
+      <div class="chips" *ngIf="suggestions.length; else noSug">
+        <span class="badge" *ngFor="let s of suggestions">{{ s.name }}</span>
+      </div>
+      <ng-template #noSug><p class="empty-inline">No suggestions</p></ng-template>
+    </section>
+  </div>
+</div>

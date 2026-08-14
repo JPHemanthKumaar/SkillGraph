@@ -1,0 +1,8 @@
+{
+  "CognoDB": {
+    "Uri": "bolt+s://db-dc597258.databases.cognodb.com",
+    "User": "cognodb",
+    "Password": "YOUR_PASSWORD_HERE",
+    "Database": "neo4j"
+  }
+}

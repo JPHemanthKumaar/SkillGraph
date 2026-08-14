@@ -1,0 +1,52 @@
+<section class="hero">
+  <div class="hero-text">
+    <h1>SkillGraph</h1>
+    <p class="lead">
+      Discover people, skills and projects through relationships —
+      powered by a graph database on CognoDB.
+    </p>
+    <div class="actions">
+      <a routerLink="/people" class="btn btn-primary">Browse people</a>
+      <a routerLink="/explore" class="btn btn-ghost">Explore graph queries</a>
+      <button class="btn btn-ghost" (click)="seed()" [disabled]="seeding">
+        {{ seeding ? 'Seeding…' : 'Load sample data' }}
+      </button>
+    </div>
+    <p class="seed-msg" *ngIf="seedMsg">{{ seedMsg }}</p>
+  </div>
+</section>
+
+<div class="loading" *ngIf="loading">Loading graph stats…</div>
+<div class="error" *ngIf="error && !loading">
+  <p>{{ error }}</p>
+  <p class="hint">Set COGNODB_URI and COGNODB_PASSWORD, then click “Load sample data”.</p>
+</div>
+
+<div class="stats" *ngIf="stats && !loading">
+  <div class="stat card">
+    <div class="num">{{ stats.people }}</div>
+    <div class="label">People</div>
+  </div>
+  <div class="stat card">
+    <div class="num">{{ stats.skills }}</div>
+    <div class="label">Skills</div>
+  </div>
+  <div class="stat card">
+    <div class="num">{{ stats.projects }}</div>
+    <div class="label">Projects</div>
+  </div>
+  <div class="stat card">
+    <div class="num">{{ stats.relationships }}</div>
+    <div class="label">Relationships</div>
+  </div>
+</div>
+
+<section class="why card" *ngIf="!loading">
+  <h2>Why a graph database?</h2>
+  <p>
+    Skills, mentors and projects form a dense web of connections.
+    Questions like “who can help on this project given overlapping skills?”
+    or “what is the shortest learning path from TypeScript to Kubernetes?”
+    are natural multi-hop traversals in a graph — and awkward recursive joins in SQL.
+  </p>
+</section>

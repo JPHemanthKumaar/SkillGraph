@@ -1,0 +1,41 @@
+.hero {
+  margin-bottom: 2rem;
+}
+.lead {
+  font-size: 1.1rem;
+  max-width: 36rem;
+  line-height: 1.6;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1.25rem;
+}
+.seed-msg { color: #86efac; margin-top: 0.75rem; }
+.hint { font-size: 0.85rem; margin-top: 0.5rem; }
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.stat {
+  text-align: center;
+  padding: 1.25rem 1rem;
+}
+.stat .num {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: -0.03em;
+}
+.stat .label {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-top: 0.25rem;
+}
+.why {
+  max-width: 40rem;
+}
+.why p { margin: 0; line-height: 1.65; }

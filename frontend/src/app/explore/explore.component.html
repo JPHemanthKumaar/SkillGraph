@@ -1,0 +1,47 @@
+<div class="page-header">
+  <div>
+    <h1>Explore</h1>
+    <p>Shortest learning path between skills — multi-hop graph traversal</p>
+  </div>
+</div>
+
+<div class="card form">
+  <div class="row">
+    <label>
+      From skill
+      <select [(ngModel)]="fromId">
+        <option value="" disabled>Select…</option>
+        <option *ngFor="let s of skills" [value]="s.id">{{ s.name }}</option>
+      </select>
+    </label>
+    <label>
+      To skill
+      <select [(ngModel)]="toId">
+        <option value="" disabled>Select…</option>
+        <option *ngFor="let s of skills" [value]="s.id">{{ s.name }}</option>
+      </select>
+    </label>
+    <button class="btn btn-primary" (click)="find()" [disabled]="loading || !fromId || !toId">
+      {{ loading ? 'Searching…' : 'Find path' }}
+    </button>
+  </div>
+  <p class="note">
+    Uses <code>shortestPath</code> over <code>PREREQUISITE | RELATED_TO</code> edges —
+    a pattern that needs recursive CTEs or multiple self-joins in a relational database.
+  </p>
+</div>
+
+<div class="error" *ngIf="error">{{ error }}</div>
+
+<div class="results" *ngIf="searched && !loading">
+  <div class="empty" *ngIf="paths.length === 0">No path found between these skills.</div>
+  <div class="path card" *ngFor="let path of paths; let i = index">
+    <div class="path-header">Path {{ i + 1 }} · {{ path.length }} hop{{ path.length === 1 ? '' : 's' }}</div>
+    <div class="steps">
+      <ng-container *ngFor="let step of path.path; let last = last">
+        <span class="step">{{ step.skillName }}</span>
+        <span class="arrow" *ngIf="!last">→</span>
+      </ng-container>
+    </div>
+  </div>
+</div>

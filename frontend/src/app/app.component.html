@@ -1,0 +1,25 @@
+<div class="shell">
+  <header class="topbar">
+    <a routerLink="/" class="brand">
+      <span class="logo">◈</span>
+      <span class="name">SkillGraph</span>
+    </a>
+    <nav>
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">Home</a>
+      <a routerLink="/people" routerLinkActive="active">People</a>
+      <a routerLink="/skills" routerLinkActive="active">Skills</a>
+      <a routerLink="/projects" routerLinkActive="active">Projects</a>
+      <a routerLink="/explore" routerLinkActive="active">Explore</a>
+    </nav>
+    <div class="status" [class.ok]="dbStatus==='healthy'" [class.bad]="dbStatus==='unhealthy'">
+      <span class="dot"></span>
+      {{ dbStatus === 'healthy' ? 'CognoDB connected' : dbStatus === 'unhealthy' ? 'DB offline' : 'Checking…' }}
+    </div>
+  </header>
+  <main>
+    <router-outlet />
+  </main>
+  <footer>
+    <p>SkillGraph · CognoDB graph assignment · .NET + Angular</p>
+  </footer>
+</div>

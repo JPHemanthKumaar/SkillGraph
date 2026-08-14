@@ -1,0 +1,39 @@
+<div class="page-header">
+  <div>
+    <h1>Projects</h1>
+    <p>Find people whose skills match project requirements</p>
+  </div>
+</div>
+
+<div class="loading" *ngIf="loading">Loading…</div>
+<div class="error" *ngIf="error">{{ error }}</div>
+
+<div class="layout" *ngIf="!loading && projects.length">
+  <div class="list">
+    <button
+      *ngFor="let p of projects"
+      class="proj-btn card"
+      [class.active]="selected?.id === p.id"
+      (click)="select(p)">
+      <div class="name">{{ p.name }}</div>
+      <div class="desc">{{ p.description }}</div>
+      <span class="badge" [class.badge-green]="p.status==='Active'" [class.badge-amber]="p.status==='Planning'">{{ p.status }}</span>
+    </button>
+  </div>
+  <div class="panel card" *ngIf="selected">
+    <h2>Experts for {{ selected.name }}</h2>
+    <p class="hint">People linked through REQUIRES_SKILL ← HAS_SKILL (graph join)</p>
+    <div class="loading" *ngIf="loadingExp">Finding experts…</div>
+    <div *ngIf="!loadingExp && experts.length === 0" class="empty-inline">No matching experts</div>
+    <a class="expert" *ngFor="let e of experts" [routerLink]="['/people', e.id]">
+      <img [src]="e.avatarUrl" class="av" />
+      <div>
+        <strong>{{ e.name }}</strong>
+        <div class="muted">{{ e.title }}</div>
+        <div class="chips">
+          <span class="badge" *ngFor="let s of e.skills">{{ s.skillName }}</span>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>

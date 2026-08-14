@@ -1,0 +1,39 @@
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 1.5rem;
+}
+@media (max-width: 800px) { .layout { grid-template-columns: 1fr; } }
+.proj-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  margin-bottom: 0.6rem;
+  cursor: pointer;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: inherit;
+}
+.proj-btn.active { border-color: var(--accent); background: var(--accent-soft); }
+.name { font-weight: 600; margin-bottom: 0.25rem; }
+.desc { font-size: 0.85rem; color: var(--muted); margin-bottom: 0.5rem; }
+.hint { font-size: 0.8rem; margin-bottom: 1rem; }
+.expert {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border);
+  text-decoration: none;
+  color: inherit;
+}
+.expert:last-child { border-bottom: none; }
+.expert:hover strong { color: var(--accent); }
+.av {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--surface2);
+}
+.muted { font-size: 0.85rem; color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.35rem; }
+.empty-inline { color: var(--muted); }

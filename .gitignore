@@ -1,0 +1,13 @@
+**/bin/
+**/obj/
+**/node_modules/
+**/dist/
+**/.angular/
+**/.env
+**/.env.local
+**/appsettings.*.local.json
+*.user
+.DS_Store
+.env
+appsettings.Local.json
+**/appsettings.Local.json
