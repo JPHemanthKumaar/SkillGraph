@@ -17,29 +17,38 @@ public class GraphService : IGraphService, IDisposable
     {
         _logger = logger;
 
+        // Prefer process env (Render) over appsettings / baked .env
         _uri = FirstNonEmpty(
-            config["CognoDB:Uri"],
-            Environment.GetEnvironmentVariable("COGNODB_URI"));
+            Environment.GetEnvironmentVariable("COGNODB_URI"),
+            config["CognoDB:Uri"]);
 
         _user = FirstNonEmpty(
-            config["CognoDB:User"],
             Environment.GetEnvironmentVariable("COGNODB_USER"),
+            config["CognoDB:User"],
             "cognodb")!;
 
         _password = FirstNonEmpty(
-            config["CognoDB:Password"],
-            Environment.GetEnvironmentVariable("COGNODB_PASSWORD")) ?? "";
+            Environment.GetEnvironmentVariable("COGNODB_PASSWORD"),
+            config["CognoDB:Password"]) ?? "";
 
         _database = FirstNonEmpty(
-            config["CognoDB:Database"],
             Environment.GetEnvironmentVariable("COGNODB_DATABASE"),
+            config["CognoDB:Database"],
             "neo4j")!;
+
+        // Free cloud hosts often fail TLS handshake with bolt+s; bolt+ssc is more reliable
+        if (!string.IsNullOrWhiteSpace(_uri) &&
+            _uri.StartsWith("bolt+s://", StringComparison.OrdinalIgnoreCase) &&
+            !_uri.StartsWith("bolt+ssc://", StringComparison.OrdinalIgnoreCase))
+        {
+            _uri = "bolt+ssc://" + _uri["bolt+s://".Length..];
+            _logger.LogInformation("Normalized CognoDB URI to bolt+ssc for cloud TLS compatibility");
+        }
 
         if (string.IsNullOrWhiteSpace(_uri))
         {
             _logger.LogWarning(
-                "CognoDB URI is not set. Set COGNODB_URI (and COGNODB_PASSWORD) via environment variables, " +
-                "a .env file in the project root, or CognoDB:Uri in appsettings.Local.json.");
+                "CognoDB URI is not set. Set COGNODB_URI (and COGNODB_PASSWORD) via environment variables.");
         }
         else
         {
@@ -72,7 +81,13 @@ public class GraphService : IGraphService, IDisposable
                 throw new InvalidOperationException(
                     "CognoDB password is empty. Set COGNODB_PASSWORD and restart the API.");
 
-            _driver = GraphDatabase.Driver(_uri, AuthTokens.Basic(_user, _password));
+            _driver = GraphDatabase.Driver(
+                _uri,
+                AuthTokens.Basic(_user, _password),
+                o => o
+                    .WithEncryptionLevel(EncryptionLevel.Encrypted)
+                    .WithTrustManager(TrustManager.CreateInsecure()));
+            _logger.LogInformation("Neo4j driver created for {Uri}", _uri);
             return _driver;
         }
     }
