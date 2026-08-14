@@ -65,31 +65,9 @@ public class GraphService : IGraphService, IDisposable
 
     private IDriver GetDriver()
     {
-        if (_driver != null) return _driver;
-
-        lock (_lock)
-        {
-            if (_driver != null) return _driver;
-
-            if (string.IsNullOrWhiteSpace(_uri))
-                throw new InvalidOperationException(
-                    "CognoDB URI is empty. Set COGNODB_URI and COGNODB_PASSWORD " +
-                    "(PowerShell: $env:COGNODB_URI='bolt+s://...'; $env:COGNODB_PASSWORD='...') " +
-                    "or put them in a .env file next to the solution, then restart the API.");
-
-            if (string.IsNullOrWhiteSpace(_password))
-                throw new InvalidOperationException(
-                    "CognoDB password is empty. Set COGNODB_PASSWORD and restart the API.");
-
-            _driver = GraphDatabase.Driver(
-                _uri,
-                AuthTokens.Basic(_user, _password),
-                o => o
-                    .WithEncryptionLevel(EncryptionLevel.Encrypted)
-                    .WithTrustManager(TrustManager.CreateInsecure()));
-            _logger.LogInformation("Neo4j driver created for {Uri}", _uri);
-            return _driver;
-        }
+        _driver = GraphDatabase.Driver(_uri, AuthTokens.Basic(_user, _password));
+        _logger.LogInformation("Neo4j driver created for {Uri}", _uri);
+        return _driver;
     }
 
     public async Task<bool> IsHealthyAsync()
